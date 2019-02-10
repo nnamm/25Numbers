@@ -37,7 +37,13 @@
     </div>
 
     <script>
-        const gameNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+        const gameNumbers = [
+            1, 2, 3, 4, 5,
+            6, 7, 8, 9, 10,
+            11, 12, 13, 14, 15,
+            16, 17, 18, 19, 20,
+            21, 22, 23, 24, 25
+        ]
         const bColor = "#fd9535"
         const bColorSuccess = "#fff"
         let btnArray = [] // 25 Buttons Data
@@ -48,35 +54,26 @@
             el: '#app',
 
             created: function () {
-                // let arrayData = gameNumbers
-                // for (let i = 0; i < 2; i++) {
-                //     let tmp = []
-                //     for (let j = 0; j < 5; j++) {
-                //         let arrayIndex = Math.floor(Math.random() * arrayData.length)
-                //         tmp[j] = arrayData[arrayIndex]
-                //         arrayData.splice(arrayIndex, 1)
-                //     }
-                //     btnArray.push(tmp)
-                // }
-                for (let i = 0; i < 25; i++) {
+                // Set the color corresponding to 1-25 button
+                [...Array(25)].forEach((_, i) => {
                     btnColor[i] = bColor
-                }
+                })
             },
 
             data: {
-                // buttons1: btnArrayy, // Row1
-                // buttons2: btnArray, // Row2
-                buttons1: randomSort(gameNumbers), // Row1 5 numbers
-                buttons2: randomSort(gameNumbers), // Row2 5 numbers
-                buttons3: randomSort(gameNumbers), // Row3 5 numbers
-                buttons4: randomSort(gameNumbers), // Row4 5 numbers
-                buttons5: randomSort(gameNumbers), // Row5 5 numbers
-                colors: btnColor // Array of Button color
+                buttons1: randomSort(gameNumbers), // 5 numbers of Row1
+                buttons2: randomSort(gameNumbers), // Row2
+                buttons3: randomSort(gameNumbers), // Row3
+                buttons4: randomSort(gameNumbers), // Row4
+                buttons5: randomSort(gameNumbers), // Row5
+                colors: btnColor // 1-25 Button color
             },
 
             methods: {
-                checkNumber: function (btnId) {
+                // Check clicked number
+                checkNumber(btnId) {
                     if (btnId == checkCounter) {
+                        // Clear button color
                         this.$set(this.colors, btnId, bColorSuccess)
                         checkCounter++
                     }
@@ -84,9 +81,11 @@
             }
         })
 
+        // Set Button number per Row
         function randomSort(num) {
             let arrayData = num
             let resultArray = []
+            // todo: created内のスプレッド演算子で規定回数繰り返せない謎
             for (let i = 0; i < 5; i++) {
                 let arrayIndex = Math.floor(Math.random() * arrayData.length)
                 resultArray[i] = arrayData[arrayIndex]
