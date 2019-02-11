@@ -5,37 +5,39 @@
     <meta charset="UTF-8">
     <title>Vue.js: Touch the Numbers風ゲーム</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.22/dist/vue.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" />
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script> -->
 </head>
 
 <body>
     <div id="app" class="main">
         <button type="button" class="numButton" v-for="btn in buttons1" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
-            v-on:click="checkNumber(btn-1)">{{
-            btn
-            }}</button>
+            v-on:click="checkNumber(btn-1)">{{ btn }}</button>
         <br>
         <button type="button" class="numButton" v-for="btn in buttons2" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
-            v-on:click="checkNumber(btn-1)">{{
-            btn
-            }}</button>
+            v-on:click="checkNumber(btn-1)">{{ btn }}</button>
         <br>
         <button type="button" class="numButton" v-for="btn in buttons3" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
-            v-on:click="checkNumber(btn-1)">{{
-            btn
-            }}</button>
+            v-on:click="checkNumber(btn-1)">{{ btn }}</button>
         <br>
         <button type="button" class="numButton" v-for="btn in buttons4" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
-            v-on:click="checkNumber(btn-1)">{{
-            btn
-            }}</button>
+            v-on:click="checkNumber(btn-1)">{{ btn }}</button>
         <br>
         <button type="button" class="numButton" v-for="btn in buttons5" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
-            v-on:click="checkNumber(btn-1)">{{
-            btn
-            }}</button>
+            v-on:click="checkNumber(btn-1)">{{ btn }}</button>
+        <div>
+            <p>Time:
+                {{ hours }} :
+                {{ minutes | zeroPad }} :
+                {{ seconds | zeroPad }} :
+                {{ milliSeconds | zeroPad(3) }}</p>
+            <button class="ui button" v-on:click="startTimer" v-bind:disabled="isRunning">START</button>
+            <button class="ui button" v-on:click="clearAllTimer">CLEAR</button>
+        </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.22/dist/vue.min.js"></script>
     <script>
         const gameNumbers = [
             1, 2, 3, 4, 5,
@@ -66,7 +68,12 @@
                 buttons3: randomSort(gameNumbers), // Row3
                 buttons4: randomSort(gameNumbers), // Row4
                 buttons5: randomSort(gameNumbers), // Row5
-                colors: btnColor // 1-25 Button color
+                colors: btnColor, // 1-25 Button color
+                startTime: 0, // Start button was pressed time
+                nowTime: 0, // Current time
+                diffTime: 0, // Difference time (nowTime - startTime)
+                animateFrame: 0, //
+                isRunning: false // Flag
             },
 
             methods: {
@@ -76,7 +83,69 @@
                         // Clear button color
                         this.$set(this.colors, btnId, bColorSuccess)
                         checkCounter++
+
+                        if (checkCounter == 3) {
+                            this.stopTimer()
+                        }
                     }
+                },
+                // 現在時刻から引数に渡した数値を startTime に代入
+                setSubtractStartTime(time) {
+                    let tmpTime = typeof (time !== 'undefined') ? time : 0
+                    this.startTime = Math.floor(performance.now() - tmpTime)
+                },
+                // Start the timer
+                startTimer() {
+                    // loop()内で this の値が変更されるので退避
+                    let vm = this;
+                    vm.setSubtractStartTime(vm.diffTime);
+                    // Loop process
+                    (function loop() {
+                        vm.nowTime = Math.floor(performance.now())
+                        vm.diffTime = vm.nowTime - vm.startTime
+                        vm.animateFrame = requestAnimationFrame(loop)
+                    }());
+                    vm.isRunning = true;
+                },
+                // Stop the timer
+                stopTimer() {
+                    this.isRunning = false;
+                    cancelAnimationFrame(this.animateFrame);
+                },
+                // Clear the timer
+                clearAllTimer() {
+                    this.startTime = 0
+                    this.nowTime = 0
+                    this.diffTime = 0
+                    this.stopTimer()
+                    this.animateFrame = 0
+                }
+            },
+
+            computed: {
+                // Calc hours
+                hours() {
+                    return Math.floor(this.diffTime / 1000 / 60 / 60)
+                },
+                // Clac minites (60分になったら0分に戻る)
+                minutes() {
+                    return Math.floor(this.diffTime / 1000 / 60) % 60
+                },
+                // Clas seconds (60秒になったら0秒に戻る)
+                seconds() {
+                    return Math.floor(this.diffTime / 1000) % 60
+                },
+                // Calc mill sec (1000ミリ秒になったら0ミリ秒に戻る)
+                milliSeconds() {
+                    return Math.floor(this.diffTime % 1000)
+                }
+            },
+
+            filters: {
+                // ゼロ埋めフィルタ 引数に桁数を入力する
+                zeroPad(value, num) {
+                    let tmpNum = typeof (num !== 'undefined') ? num : 2
+                    return value.toString().padStart(tmpNum, "0")
                 }
             }
         })
