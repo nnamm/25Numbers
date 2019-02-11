@@ -13,31 +13,32 @@
 <body>
     <div id="app" class="main">
         <button type="button" class="numButton" v-for="btn in buttons1" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
-            v-on:click="checkNumber(btn-1)">{{ btn }}</button>
+            v-bind:disabled="isStart" v-on:click="checkNumber(btn-1)">{{ btn }}</button>
         <br>
         <button type="button" class="numButton" v-for="btn in buttons2" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
-            v-on:click="checkNumber(btn-1)">{{ btn }}</button>
+            v-bind:disabled="isStart" v-on:click="checkNumber(btn-1)">{{ btn }}</button>
         <br>
         <button type="button" class="numButton" v-for="btn in buttons3" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
-            v-on:click="checkNumber(btn-1)">{{ btn }}</button>
+            v-bind:disabled="isStart" v-on:click="checkNumber(btn-1)">{{ btn }}</button>
         <br>
         <button type="button" class="numButton" v-for="btn in buttons4" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
-            v-on:click="checkNumber(btn-1)">{{ btn }}</button>
+            v-bind:disabled="isStart" v-on:click="checkNumber(btn-1)">{{ btn }}</button>
         <br>
         <button type="button" class="numButton" v-for="btn in buttons5" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
-            v-on:click="checkNumber(btn-1)">{{ btn }}</button>
+            v-bind:disabled="isStart" v-on:click="checkNumber(btn-1)">{{ btn }}</button>
         <div>
             <p>Time:
                 {{ hours }} :
                 {{ minutes | zeroPad }} :
                 {{ seconds | zeroPad }} :
                 {{ milliSeconds | zeroPad(3) }}</p>
-            <button class="ui button" v-on:click="startTimer" v-bind:disabled="isRunning">START</button>
+            <button class="ui primary button" v-on:click="startTimer" v-bind:disabled="isRunning">START</button>
             <button class="ui button" v-on:click="clearAllTimer">CLEAR</button>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.22/dist/vue.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.5.22/dist/vue.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.22/dist/vue.js"></script>
     <script>
         const gameNumbers = [
             1, 2, 3, 4, 5,
@@ -73,7 +74,8 @@
                 nowTime: 0, // Current time
                 diffTime: 0, // Difference time (nowTime - startTime)
                 animateFrame: 0, //
-                isRunning: false // Flag
+                isRunning: false, // Start button flag
+                isStart: true // Game flag
             },
 
             methods: {
@@ -83,34 +85,37 @@
                         // Clear button color
                         this.$set(this.colors, btnId, bColorSuccess)
                         checkCounter++
-
-                        if (checkCounter == 3) {
+                        // Stop the timer when finished
+                        if (checkCounter == 25) {
                             this.stopTimer()
                         }
                     }
                 },
+                // Todo: ここでエラーが出る
                 // 現在時刻から引数に渡した数値を startTime に代入
                 setSubtractStartTime(time) {
-                    let tmpTime = typeof (time !== 'undefined') ? time : 0
+                    var tmpTime = typeof time !== 'undefined' ? time : 0
                     this.startTime = Math.floor(performance.now() - tmpTime)
                 },
                 // Start the timer
                 startTimer() {
                     // loop()内で this の値が変更されるので退避
-                    let vm = this;
-                    vm.setSubtractStartTime(vm.diffTime);
+                    let vm = this
+                    vm.isStart = false
+                    vm.setSubtractStartTime(vm.diffTime)
                     // Loop process
                     (function loop() {
                         vm.nowTime = Math.floor(performance.now())
                         vm.diffTime = vm.nowTime - vm.startTime
                         vm.animateFrame = requestAnimationFrame(loop)
-                    }());
-                    vm.isRunning = true;
+                    }())
+                    vm.isRtunning = true
                 },
                 // Stop the timer
                 stopTimer() {
-                    this.isRunning = false;
-                    cancelAnimationFrame(this.animateFrame);
+                    this.isRunning = false
+                    this.isStart = false
+                    cancelAnimationFrame(this.animateFrame)
                 },
                 // Clear the timer
                 clearAllTimer() {
@@ -144,7 +149,7 @@
             filters: {
                 // ゼロ埋めフィルタ 引数に桁数を入力する
                 zeroPad(value, num) {
-                    let tmpNum = typeof (num !== 'undefined') ? num : 2
+                    let tmpNum = typeof num !== 'undefined' ? num : 2
                     return value.toString().padStart(tmpNum, "0")
                 }
             }
