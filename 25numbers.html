@@ -15,29 +15,36 @@
 
 <body>
     <div id="app" class="main">
-        <button type="button" class="numButton" v-for="btn in buttons1" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
-            v-bind:disabled="isStart" v-on:click="checkNumber(btn-1)">{{ btn }}</button>
-        <br>
-        <button type="button" class="numButton" v-for="btn in buttons2" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
-            v-bind:disabled="isStart" v-on:click="checkNumber(btn-1)">{{ btn }}</button>
-        <br>
-        <button type="button" class="numButton" v-for="btn in buttons3" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
-            v-bind:disabled="isStart" v-on:click="checkNumber(btn-1)">{{ btn }}</button>
-        <br>
-        <button type="button" class="numButton" v-for="btn in buttons4" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
-            v-bind:disabled="isStart" v-on:click="checkNumber(btn-1)">{{ btn }}</button>
-        <br>
-        <button type="button" class="numButton" v-for="btn in buttons5" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
-            v-bind:disabled="isStart" v-on:click="checkNumber(btn-1)">{{ btn }}</button>
         <div>
-            <p>Time:
+            <p class="timer">Time:
                 {{ hours }} :
                 {{ minutes | zeroPad }} :
                 {{ seconds | zeroPad }} :
                 {{ milliSeconds | zeroPad(3) }}</p>
-            <button class="ui primary button" v-on:click="startTimer" v-bind:disabled="isRunning">START</button>
-            <button class="ui button" v-on:click="clearAllData">CLEAR</button>
         </div>
+        <div>
+            <button type="button" class="numButton" v-for="btn in buttonRow1" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
+                v-bind:disabled="isStart" v-on:click="checkNumber(btn-1)">{{ btn }}</button>
+            <br>
+            <button type="button" class="numButton" v-for="btn in buttonRow2" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
+                v-bind:disabled="isStart" v-on:click="checkNumber(btn-1)">{{ btn }}</button>
+            <br>
+            <button type="button" class="numButton" v-for="btn in buttonRow3" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
+                v-bind:disabled="isStart" v-on:click="checkNumber(btn-1)">{{ btn }}</button>
+            <br>
+            <button type="button" class="numButton" v-for="btn in buttonRow4" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
+                v-bind:disabled="isStart" v-on:click="checkNumber(btn-1)">{{ btn }}</button>
+            <br>
+            <button type="button" class="numButton" v-for="btn in buttonRow5" v-bind:value="btn" v-bind:style="{background: colors[btn-1]}"
+                v-bind:disabled="isStart" v-on:click="checkNumber(btn-1)">{{ btn }}</button>
+        </div>
+        <div class="buttons">
+            <button class="ui primary button" v-on:click="startGame" v-bind:disabled="isRunning">START</button>
+            <button class="ui button" v-on:click="clearAllData">CLEAR</button>
+            <br>
+            <button class="ui green button" v-show="isShow">{{ message }}</button>
+        </div>
+    </div>
     </div>
 
     <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.7/dist/vue.min.js"></script> -->
